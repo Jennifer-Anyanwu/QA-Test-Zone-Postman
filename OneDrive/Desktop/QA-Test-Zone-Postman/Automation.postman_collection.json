@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "b84a95ac-0989-4420-a3b2-dd92c8bcf5f8",
+		"name": "Automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21084518"
+	},
+	"item": [
+		{
+			"name": "Fetching All posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"UserId is not empty\", function () {",
+							"    var posts = pm.response.json();",
+							"    var count = posts.filter(x=>x.userId===\"\").length",
+							"    pm.expect(count).to.be.at.most(0)",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"No Response Param is empty\", function () {",
+							"   var posts =  pm.response.json();",
+							"   var emptyParamsCount = posts.filter(post =>",
+							"        !post.userId || post.userId === \"\" ||",
+							"        !post.id || post.id === \"\" ||",
+							"        !post.title || post.title === \"\" ||",
+							"        !post.body || post.body === \"\").length;",
+							"   pm.expect(emptyParamsCount).to.be.at.most(0)",
+							"",
+							"   console.log(emptyParamsCount);",
+							"});",
+							"",
+							"pm.test(\"UserId and Id are Integers\", function () {",
+							"   var posts =  pm.response.json();",
+							"   var nonIntegerParamsCount = posts.filter(post =>",
+							"        !Number.isInteger(post.userId) ||  !Number.isInteger(post.id)).length;",
+							"   pm.expect(nonIntegerParamsCount).to.be.at.most(0)",
+							"",
+							"   console.log(nonIntegerParamsCount);",
+							"});",
+							"",
+							"pm.test(\"Title and Body are Strings\", function () {",
+							"   var posts =  pm.response.json();",
+							"   var nonIntegerParamsCount = posts.filter(post =>",
+							"        !(typeof post.title === \"string\") ||  !(typeof post.body === \"string\")).length;",
+							"   pm.expect(nonIntegerParamsCount).to.be.at.most(0)",
+							"",
+							"   console.log(nonIntegerParamsCount);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/posts",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch App Post Made with User Id 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Count posts by userId 1\", function () {",
+							"    var responseData = pm.response.json(); ",
+							"    var count = responseData.filter(post => post.userId === 1).length; ",
+							"    console.log(\"Count is \"+ count);",
+							"});",
+							"",
+							"pm.test(\"All returned userIds are valid\", function () {",
+							"",
+							"    let queryParams = pm.request.url.query.all();",
+							"    let userId = queryParams.find(param => param.key === \"userId\").value;",
+							"    var responseData = pm.response.json(); ",
+							"    var userIdCount = responseData.filter(post => post.userId != userId).length;",
+							"    pm.expect(userIdCount).to.be.at.most(0);",
+							"});",
+							"",
+							"pm.test(\"No Response Param is empty\", function () {",
+							"   var posts =  pm.response.json();",
+							"   var emptyParamsCount = posts.filter(post =>",
+							"        !post.userId || post.userId === \"\" ||",
+							"        !post.id || post.id === \"\" ||",
+							"        !post.title || post.title === \"\" ||",
+							"        !post.body || post.body === \"\").length;",
+							"   pm.expect(emptyParamsCount).to.be.at.most(0)",
+							"",
+							"   console.log(emptyParamsCount);",
+							"});",
+							"",
+							"pm.test(\"UserId and Id are Integers\", function () {",
+							"   var posts =  pm.response.json();",
+							"   var nonIntegerParamsCount = posts.filter(post =>",
+							"        !Number.isInteger(post.userId) ||  !Number.isInteger(post.id)).length;",
+							"   pm.expect(nonIntegerParamsCount).to.be.at.most(0)",
+							"",
+							"   console.log(nonIntegerParamsCount);",
+							"});",
+							"",
+							"pm.test(\"Title and Body are Strings\", function () {",
+							"   var posts =  pm.response.json();",
+							"   var nonIntegerParamsCount = posts.filter(post =>",
+							"        !(typeof post.title === \"string\") ||  !(typeof post.body === \"string\")).length;",
+							"   pm.expect(nonIntegerParamsCount).to.be.at.most(0)",
+							"",
+							"   console.log(nonIntegerParamsCount);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseUrl}}/posts?userId=1",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"posts"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 (Created)\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response has userId 1\", function() {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.userId).to.eql(1);",
+							"});",
+							"",
+							"pm.test(\"Status code is 201 (Created)\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response has correct userId\", function() {",
+							"    var inputtedUserId = JSON.parse(pm.request.body.raw).userId;",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.userId).to.eql(inputtedUserId);",
+							"});",
+							"",
+							"pm.test(\"No Response Param is empty\", function () {",
+							"   var post =  pm.response.json();",
+							"   var emptyParamsBool = ",
+							"        !post.userId || post.userId === \"\" ||",
+							"        !post.id || post.id === \"\" ||",
+							"        !post.title || post.title === \"\" ||",
+							"        !post.body || post.body === \"\";",
+							"   pm.expect(emptyParamsBool).to.be.false",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 101, \n  \"userId\": 1,\n  \"title\": \"Zone Test\",\n  \"body\": \"This is the body of the post.\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/posts",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "https://jsonplaceholder.typicode.com",
+			"type": "string"
+		}
+	]
+}
